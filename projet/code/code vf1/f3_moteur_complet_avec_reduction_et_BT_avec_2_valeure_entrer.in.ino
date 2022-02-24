@@ -13,14 +13,14 @@ int tps = 4000;//1700 = un toure de molette mais bt suis pas BT fonctio a partir
 
 int pin = 8;
 int pina = 9;
-int pin2 = 8;
-int pin3 = 9;
-int pin4 = 2;
-int pin5 = 3;
-int pin6 = 4;
-int pin7 = 5;
-int pin8 = 6;
-int pin9 = 7;
+int pin2 = 2;
+int pin3 = 3;
+int pin4 = 4;
+int pin5 = 5;
+int pin6 = 6;
+int pin7 = 7;
+int pin8 = 8;
+int pin9 = 9;
 int pin10 = 12;
 int pin11 = 13;
 int pin12 = A0;
@@ -48,14 +48,20 @@ Serial.begin(9600);
 }
 
 void loop() {
-Serial.println('2');
+Serial.println('1');
 //recupe du moteur q fqire tourner
   if (BT.available()>0){
-    n = BT.read();
-    tb = BT.read();
+    if (BT.read()<6){
+      n = BT.read();
+    }
+    else {
+      tb = BT.read();
+    }
+      
     Serial.println(n);
     Serial.println(tb);
     //garde pour test
+    //n = '4';
     if (n == '0'){pin = pin2; pina = pin3; Serial.println("n = 0 OK");}
     //choisit quelle moteur doit tourner en fonction de la corde a accorder
     if (n == '1'){ pin = pin4; pina = pin5; Serial.println("n = 1 OK");}
@@ -66,12 +72,12 @@ Serial.println('2');
 
 
     //recupe du sens de rotation du moteur par bt
-    if (tb == '0'){
+    if (tb == '6'){
       //garde pour test
       Serial.println("tb = 0 OK");
       t = 0;
     }
-    if (tb == '1'){
+    if (tb == '7'){
       //garde pour test
       Serial.println("tb = 1 OK");
       t = 1;
@@ -81,17 +87,34 @@ Serial.println('2');
 
 //rotation des moteur
 //fait tourner a ... pour ... la corde
+if (n == '5'){
+  if (t == 1){
+    analogWrite(pin,LOW);
+    analogWrite(pina,HIGH);
+  }
+  if (t == 0){
+    analogWrite(pin,LOW);
+    analogWrite(pina,HIGH);
+  }
+
+  delay(tps);
+  analogWrite(pin,LOW);
+  analogWrite(pina,HIGH);
+  
+}
+
+else{
 if (t == 1){
-digitalWrite(pin,LOW);
-digitalWrite(pina,HIGH);
-etat = 1;
+  digitalWrite(pin,LOW);
+  digitalWrite(pina,HIGH);
+  etat = 1;
 }
 
 //fait tourner a ... pour ... la corde
 if (t == 0){
-digitalWrite(pin,HIGH);
-digitalWrite(pina,LOW);
-etat = 2;
+  digitalWrite(pin,HIGH);
+  digitalWrite(pina,LOW);
+  etat = 2;
 }
 
  
@@ -101,4 +124,7 @@ if (etat == t){
 
 //laisse au moteur le temps de faire un tour
 delay(tps);
+digitalWrite(pin,LOW);
+digitalWrite(pina,LOW);
+}
 }
